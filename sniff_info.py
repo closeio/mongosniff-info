@@ -8,8 +8,9 @@ from collections import defaultdict
 @click.command()
 @click.argument('file', type=click.File('r'))
 @click.argument('option', type=click.Choice(['sort', 'aggregate']))
+@click.option('--collection', default=None, help='Only inspect operations for a particular collection.')
 # TODO allow sorting by any key that's in the "op" dict, not just size_out
-def run(file, option):
+def run(file, option, collection):
 
     print 'Gathering data'
 
@@ -37,6 +38,10 @@ def run(file, option):
 
     # Merge the parts together
     ops = merge_parts(parts)
+
+    # Filter by a collection if it was specified
+    if collection is not None:
+        ops = [op for op in ops if op['collection'] == collection]
 
     print 'Data gathered, analyzing...\n'
 
